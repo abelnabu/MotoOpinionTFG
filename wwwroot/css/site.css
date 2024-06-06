@@ -1,0 +1,116 @@
+html {
+  font-size: 14px;
+  font-family:'Franklin Gothic';
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+nav {
+    background-color: #333;
+    padding: 10px 0;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+    nav ul li {
+        margin: 0 15px;
+        align-content: center;
+    }
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    font-size: larger;
+    font-weight: bold;
+}
+
+    nav ul li a:hover {
+        background-color: #a1a1a1;
+    }
+
+nav ul li a.active {
+    background-color: #e60000;
+}
+
+form {
+    border: 1px solid #9d9d9d;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #a9a9a97a;
+}
+
+.resaltado {
+    background-color: #ccd3d996;
+    /*color: #fff;*/
+    transform: scale(1.05);
+    transition: background-color 0.3s, transform 0.3s;
+}
+.btn-primary {
+    background-color: #4d6680 !important;
+    border-color: #4d6680 !important;
+}
+    
+.btn-primary:hover {
+    background-color: #419bf5 !important;
+}
+
+.btn-danger {
+    background-color: #db5562 !important;
+}
+
+.rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+}
+
+    .rating input {
+        display: none;
+    }
+
+    .rating label {
+        font-size: 2em;
+        color: #ccc;
+        cursor: pointer;
+    }
+
+    .rating input:checked ~ label {
+        color: #f5b301;
+    }
+
+    .rating input:hover ~ label {
+        color: #f5b301;
+    }
+
+    .rating input:checked + label:hover,
+    .rating input:checked + label:hover ~ label,
+    .rating input:checked ~ label:hover,
+    .rating input:checked ~ label:hover ~ label {
+        color: #f5b301;
+    }

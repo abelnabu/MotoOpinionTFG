@@ -1,0 +1,244 @@
+﻿@model List<ResenyasModel>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resenyas Motos</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MotoOpinion.styles.css" asp-append-version="true" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+        @{
+        if (ViewData["Error"] != null && ViewData["Error"].ToString() != "")
+        {
+                        <h4 class="alert-danger">@ViewData["Error"]</h4>
+        }
+        if (ViewData["ProcesoRealizado"] != null && ViewData["ProcesoRealizado"].ToString() != "")
+        {
+                        <h4 class="alert-info">@ViewData["ProcesoRealizado"]</h4>
+        }
+        }
+       
+        <div class="container" id="tablaResenyas">
+           <div style="display:flex; flex-direction: row; justify-content: space-between; margin-top: 50px">
+            <div style="align-self: center;">
+            <h1 >Reseñas</h1>
+        
+            </div>
+            <div style="align-self: center;">
+                @{
+                    if (ViewData["RolUsuario"] != null)
+                    {
+                        if (ViewData["RolUsuario"].ToString() == "Reseñador" || ViewData["RolUsuario"].ToString() == "Admin")
+                        {
+                            <a onclick="crearResenya()" id="crearResenya" style="display:none" class="btn btn-primary">+ Crear Reseña</a>
+                        }
+                    }
+                }
+            
+            </div>
+            </div>
+            
+           
+        <table class="table mt-4">
+            
+            <tbody>
+                @foreach (var resenya in ViewBag.Resenyas)
+                {
+                <tr class="resenya">
+                        <td hidden><label>@resenya.Id</label></td>
+                        <td><img height="200vh" src="@resenya.ImagenBase64" /></td>
+                    <td>
+                            <table>
+                        <tr><td>@resenya.Titulo</td></tr>
+                        <tr><td>@resenya.Fecha.ToString("dd/MM/yyyy")</td></tr>
+                        <tr><td>@resenya.UsuarioNombre</td></tr>
+                        </table>
+                    </td>
+                    <td>
+
+                        @{
+                            if (ViewData["UsuarioNombre"].ToString() == @resenya.UsuarioNombre)
+                                {
+                                    <a class="btn btn-primary btn-sm mr-2" onclick="editarRegistro(this)">Editar</a>
+                                    <a class="btn btn-danger btn-sm" onclick="borrarRegistro(this)">Eliminar</a>
+                                }
+                        }
+
+                    </td>
+                </tr>
+                }
+               
+            </tbody>
+        </table>
+
+        <div style="text-align-last: center;">
+
+                @for (int i = 0; i < @ViewBag.numeroPaginas; i++)
+                {
+                    <a class="btn btn-primary btn-sm mr-2" onclick="paginar(@i.ToString())">@i.ToString()</a>
+                }
+            <br /><br /><br /><br />
+            </div>
+       
+        </div>
+        
+    </body>
+
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $.ajax({
+            url: '@Url.Action("ObtenerPermisos", "Login")',
+            type: 'POST',
+            success: function (data) {
+                if (data == "") {
+
+                } else if (data == "Admin" || data == "Reseñador") {
+                    document.getElementById("crearResenya").style.display = "inline";
+                }
+            },
+            error: function () {
+                
+            }
+        });
+
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      
+        var filas = document.querySelectorAll('table tr');
+
+        filas.forEach(function (fila) {
+            fila.addEventListener('mouseover', function () {
+                fila.classList.add('resaltado');
+            });
+
+            fila.addEventListener('mouseout', function () {
+                fila.classList.remove('resaltado');
+            });
+        });
+
+        var resenyas = document.querySelectorAll('.resenya');
+
+        resenyas.forEach(function (resenya) {
+            resenya.addEventListener('click', function (e) {
+                
+                var idResenya = resenya.children[0].children[0].innerHTML;
+                var url = '@Url.Action("leerResenya", "Resenyas", new { idResenya = 1 })'.replace('1', idResenya);
+                window.location.href = url;
+            });
+        });
+    });
+
+    function crearResenya(e) {
+        
+        var url = '@Url.Action("crear", "Resenyas")';
+        window.location.href = url;
+        
+    }
+
+</script>
+
+@* <script>
+    document.getElementById("ImagenBase64C").addEventListener("change", leerArchivoC, false);
+    document.getElementById("ImagenBase64E").addEventListener("change", leerArchivoE, false);
+
+    function leerArchivoC() {
+        if (this.files && this.files[0]) {
+            var FR = new FileReader();
+            FR.onload = function (e) {
+                document.getElementById("imgOcultaC").value = e.target.result;
+                document.getElementById("imgSubidaC").setAttribute("src", e.target.result);
+            };
+            FR.readAsDataURL(this.files[0]);
+        }
+    } 
+    function leerArchivoE() {
+        if (this.files && this.files[0]) {
+            var FR = new FileReader();
+            FR.onload = function (e) {
+                document.getElementById("imgOcultaE").value = e.target.result;
+                document.getElementById("imgSubidaE").setAttribute("src", e.target.result);
+            };
+            FR.readAsDataURL(this.files[0]);
+        }
+    }
+
+    function verDivCreacion() {
+        document.getElementById("divEdicionResenyas").style.display = "none";
+        document.getElementById("divCreacionResenyas").style.display = "inline";
+        
+    }
+
+    function cancelarAccion(accion) { 
+        if (accion == "Crear") {
+            document.getElementById("divCreacionResenyas").style.display = "none";
+           
+        } else if (accion == "Editar") {
+            document.getElementById("divEdicionResenyas").style.display = "none";
+           
+        }
+
+    }
+
+    function paginar(e) {
+        var url = '@Url.Action("Index", "Resenyas", new { paginacion = 1 })'.replace('1', e);
+        window.location.href = url;
+    }
+
+    function editarRegistro(e) {
+        var nombreModelo = e.parentElement.parentElement.children[1].textContent;
+        var data = { nombre: nombreModelo }
+
+        $.ajax({
+            url: '@Url.Action("leerModelo", "Resenyas")',
+            type: 'POST',
+            data: data,
+            success: function (data) {
+                document.getElementById("divCreacionResenyas").style.display = "none";
+                var objModelo = JSON.parse(data);
+                document.getElementById("divEdicionResenyas").style.display = "inline";
+
+                document.getElementById("NombreE").value = objModelo.Nombre;
+                document.getElementById("CilindradaE").value = objModelo.Cilindrada;
+                document.getElementById("TipoMotorE").value = objModelo.TipoMotor;
+                document.getElementById("PotenciaE").value = objModelo.Potencia;
+                document.getElementById("PesoE").value = objModelo.Peso;
+                document.getElementById("TipoE").value = objModelo.Tipo;
+                document.getElementById("AnyoE").value = objModelo.Anyo;
+                document.getElementById("PrecioE").value = objModelo.Precio;
+                document.getElementById("DescripcionE").value = objModelo.Descripcion;
+                document.getElementById("imgSubidaE").setAttribute("src", objModelo.ImagenBase64);
+                document.getElementById("imgOcultaE").value = objModelo.ImagenBase64;
+                
+                const selectElement = document.getElementById('MarcaNombreE');
+
+                for (let i = 0; i < selectElement.options.length; i++) {
+                    if (selectElement.options[i].text === objModelo.MarcaNombre) {
+                        selectElement.selectedIndex = i;
+                        break;
+                    }
+                }
+            },
+            error: function () {
+
+            }
+        });
+    }
+
+    
+</script> *@
+
+<style>
+    .table td{
+        align-content: center;
+    }
+</style>

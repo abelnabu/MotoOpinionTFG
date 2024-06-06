@@ -1,0 +1,327 @@
+﻿@model List<ModelosMotosModel>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modelos Motos</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MotoOpinion.styles.css" asp-append-version="true" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+        @{
+        if (ViewData["Error"] != null && ViewData["Error"].ToString() != "")
+        {
+                        <h4 class="alert-danger">@ViewData["Error"]</h4>
+        }
+        if (ViewData["ProcesoRealizado"] != null && ViewData["ProcesoRealizado"].ToString() != "")
+        {
+                        <h4 class="alert-info">@ViewData["ProcesoRealizado"]</h4>
+        }
+        }
+       
+        <div class="container" id="divCreacionModeloMotos" style="display: none">
+            <h1 class="mt-5">Crear nuevo modelo de moto</h1>
+        <form asp-action="crear" asp-controller="ModelosMotos" method="POST" enctype="multipart/form-data" class="mt-4">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="MarcaID">Marca:</label>
+                    <select class="form-control" id="MarcaNombreC" name="MarcaNombre">
+                        @foreach (var marca in ViewBag.Marcas)
+                        {
+                            <option value="@marca.Nombre">@marca.Nombre</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="Nombre">Nombre:</label>
+                    <input type="text" class="form-control" id="NombreC" name="Nombre" maxlength="100" required>
+                </div>
+            </div>
+           
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="TipoMotor">Tipo de Motor:</label>
+                    <input type="text" class="form-control" id="TipoMotorC" name="TipoMotor" maxlength="50" >
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="Tipo">Tipo de moto:</label>
+                    <input type="text" class="form-control" id="TipoC" name="Tipo" maxlength="50" >
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="Año">Año:</label>
+                    <input type="number" class="form-control" id="AnyoC" name="Anyo" >
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="Precio">Precio:</label>
+                    <input type="number" class="form-control" id="PrecioC" name="Precio" >
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="Cilindrada">Cilindrada:</label>
+                    <input type="number" class="form-control" id="CilindradaC" name="Cilindrada">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="Potencia">Potencia:</label>
+                    <input type="number" class="form-control" id="PotenciaC" name="Potencia">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="Peso">Peso:</label>
+                    <input type="number" class="form-control" id="PesoC" name="Peso">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Descripcion">Descripción:</label>
+                <textarea class="form-control" id="DescripcionC" name="Descripcion" maxlength="500" ></textarea>
+            </div>
+            <div class="form-group col-md-6 p-0 m-0 pb-2">
+                <label for="ImagenBase64">Imagen:</label>
+                <input type="file" class="form-control-file btn btn-warning" id="ImagenBase64C" accept="image/*">
+                <input type="hidden" name="ImagenBase64" id="imgOcultaC" />
+                <img height="200vh" src="" id="imgSubidaC"/>
+            </div>
+                <button type="submit" class="btn btn-success">Crear Modelo</button>
+                <a onclick="cancelarAccion('Crear')" class="btn btn-danger">Cancelar</a>
+            </form>
+        </div>
+
+    <div class="container" id="divEdicionModeloMotos" style="display: none">
+        <h1 class="mt-5">Editar modelo de moto</h1>
+        <form asp-action="editar" asp-controller="ModelosMotos" method="POST" enctype="multipart/form-data" class="mt-4">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="MarcaID">Marca:</label>
+                    <select class="form-control" id="MarcaNombreE" name="MarcaNombre">
+                        @foreach (var marca in ViewBag.Marcas)
+                        {
+                            <option value="@marca.Nombre">@marca.Nombre</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="Nombre">Nombre:</label>
+                    <input type="text" class="form-control" id="NombreE" name="Nombre" maxlength="100" readonly required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="TipoMotor">Tipo de Motor:</label>
+                    <input type="text" class="form-control" id="TipoMotorE" name="TipoMotor" maxlength="50">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="Tipo">Tipo de moto:</label>
+                    <input type="text" class="form-control" id="TipoE" name="Tipo" maxlength="50">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="Año">Año:</label>
+                    <input type="number" class="form-control" id="AnyoE" name="Anyo">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="Precio">Precio:</label>
+                    <input type="number" class="form-control" id="PrecioE" name="Precio">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="Cilindrada">Cilindrada:</label>
+                    <input type="number" class="form-control" id="CilindradaE" name="Cilindrada">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="Potencia">Potencia:</label>
+                    <input type="number" class="form-control" id="PotenciaE" name="Potencia">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="Peso">Peso:</label>
+                    <input type="number" class="form-control" id="PesoE" name="Peso">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Descripcion">Descripción:</label>
+                <textarea class="form-control" id="DescripcionE" name="Descripcion" maxlength="500"></textarea>
+            </div>
+            <div class="form-group col-md-6 p-0 m-0 pb-2">
+                <label for="ImagenBase64">Imagen:</label>
+                <input type="file" class="form-control-file btn btn-warning" id="ImagenBase64E" accept="image/*" />
+                <input type="hidden" name="ImagenBase64" id="imgOcultaE" />
+                <img height="200vh" src="" id="imgSubidaE" />
+
+            </div>
+            <button type="submit" class="btn btn-success">Guardar Modelo</button>
+            <a onclick="cancelarAccion('Editar')" class="btn btn-danger">Cancelar</a>
+        </form>
+    </div>
+        
+        <div class="container" id="tablaModelos">
+            <div style="display:flex; flex-direction: row; justify-content: space-between; margin-top: 50px">
+                <div style="align-self: center;">
+                    <h1 >Lista de Modelos</h1>
+                </div>
+                <div style="align-self: center;">
+                    <a onclick="verDivCreacion()" class="btn btn-primary">+ Crear Nuevo</a>
+                </div>
+            </div>
+            
+            <table class="table mt-4">
+                <thead class="thead-dark">
+                <tr >
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Marca</th>
+                        <th>Cilindrada</th>
+                        <th>Tipo motor</th>
+                        <th>Potencia</th>
+                        <th>Tipo</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                @foreach (var modelo in ViewBag.ModelosMotos)
+                    {
+                    <tr style="height: 15vh">
+                            <td><img height="200vh" src="@modelo.ImagenBase64"/></td>
+                            <td>@modelo.Nombre</td>
+                            <td>@modelo.MarcaNombre</td>
+                            <td>@modelo.Cilindrada</td>
+                            <td>@modelo.TipoMotor</td>
+                            <td>@modelo.Potencia</td>
+                            <td>@modelo.Tipo</td>
+                            <td>
+                                <a class="btn btn-primary btn-sm mr-2" onclick="editarRegistro(this)">Editar</a>
+                                <a class="btn btn-danger btn-sm" onclick="borrarRegistro(this)">Eliminar</a>
+                            </td>
+                        </tr>
+                    }
+                   
+                </tbody>
+            </table>
+
+        <div style="text-align-last: center;">
+
+                @for (int i = 0; i < @ViewBag.numeroPaginas; i++)
+                {
+                    <a class="btn btn-primary btn-sm mr-2" onclick="paginar(@i.ToString())">@i.ToString()</a>
+                }
+            <br /><br /><br /><br />
+            </div>
+       
+        </div>
+        
+    </body>
+
+</html>
+
+<script>
+    document.getElementById("ImagenBase64C").addEventListener("change", leerArchivoC, false);
+    document.getElementById("ImagenBase64E").addEventListener("change", leerArchivoE, false);
+
+    function leerArchivoC() {
+        if (this.files && this.files[0]) {
+            var FR = new FileReader();
+            FR.onload = function (e) {
+                document.getElementById("imgOcultaC").value = e.target.result;
+                document.getElementById("imgSubidaC").setAttribute("src", e.target.result);
+            };
+            FR.readAsDataURL(this.files[0]);
+        }
+    } 
+    function leerArchivoE() {
+        if (this.files && this.files[0]) {
+            var FR = new FileReader();
+            FR.onload = function (e) {
+                document.getElementById("imgOcultaE").value = e.target.result;
+                document.getElementById("imgSubidaE").setAttribute("src", e.target.result);
+            };
+            FR.readAsDataURL(this.files[0]);
+        }
+    }
+
+    function verDivCreacion() {
+        document.getElementById("divEdicionModeloMotos").style.display = "none";
+        document.getElementById("divCreacionModeloMotos").style.display = "inline";
+        
+    }
+
+    function cancelarAccion(accion) { 
+        if (accion == "Crear") {
+            document.getElementById("divCreacionModeloMotos").style.display = "none";
+           
+        } else if (accion == "Editar") {
+            document.getElementById("divEdicionModeloMotos").style.display = "none";
+           
+        }
+
+    }
+
+    function paginar(e) {
+        var url = '@Url.Action("Index", "ModelosMotos", new { paginacion = 1 })'.replace('1', e);
+        window.location.href = url;
+    }
+
+    function editarRegistro(e) {
+        var nombreModelo = e.parentElement.parentElement.children[1].textContent;
+        var data = { nombre: nombreModelo }
+
+        $.ajax({
+            url: '@Url.Action("leerModelo", "ModelosMotos")',
+            type: 'POST',
+            data: data,
+            success: function (data) {
+                document.getElementById("divCreacionModeloMotos").style.display = "none";
+                var objModelo = JSON.parse(data);
+                document.getElementById("divEdicionModeloMotos").style.display = "inline";
+
+                document.getElementById("NombreE").value = objModelo.Nombre;
+                document.getElementById("CilindradaE").value = objModelo.Cilindrada;
+                document.getElementById("TipoMotorE").value = objModelo.TipoMotor;
+                document.getElementById("PotenciaE").value = objModelo.Potencia;
+                document.getElementById("PesoE").value = objModelo.Peso;
+                document.getElementById("TipoE").value = objModelo.Tipo;
+                document.getElementById("AnyoE").value = objModelo.Anyo;
+                document.getElementById("PrecioE").value = objModelo.Precio;
+                document.getElementById("DescripcionE").value = objModelo.Descripcion;
+                document.getElementById("imgSubidaE").setAttribute("src", objModelo.ImagenBase64);
+                document.getElementById("imgOcultaE").value = objModelo.ImagenBase64;
+                
+                const selectElement = document.getElementById('MarcaNombreE');
+
+                for (let i = 0; i < selectElement.options.length; i++) {
+                    if (selectElement.options[i].text === objModelo.MarcaNombre) {
+                        selectElement.selectedIndex = i;
+                        break;
+                    }
+                }
+            },
+            error: function () {
+
+            }
+        });
+    }
+
+    function borrarRegistro(e) {
+        const mensaje = "¿Estás seguro de que deseas eliminar el registro?";
+        const confirmacion = confirm(mensaje);
+
+        if (confirmacion) {
+            var nombreModelos = e.parentElement.parentElement.children[1].textContent;
+            
+            var url = '@Url.Action("eliminar", "ModelosMotos", new { nombre = 1 })'.replace('1', nombreModelos);
+            window.location.href = url;
+        }
+    }
+</script>
+
+<style>
+    .table td{
+        align-content: center;
+    }
+</style>

@@ -1,0 +1,101 @@
+﻿@model List<MarcasMotosModel>
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Marcas Motos</title>
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/MotoOpinion.styles.css" asp-append-version="true" />
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+        @{
+            if (ViewData["Error"] != null && ViewData["Error"].ToString() != "")
+            {
+                <h4 class="alert-danger">@ViewData["Error"]</h4>
+            }
+            if (ViewData["ProcesoRealizado"] != null && ViewData["ProcesoRealizado"].ToString() != "")
+            {
+                <h4 class="alert-info">@ViewData["ProcesoRealizado"]</h4>
+            }
+        }
+
+        <div class="container" id="divCreacionMarca" style="display: none">
+            <h1 class="mt-5">Crear Nueva Marca</h1>
+            <form asp-action="crear" asp-controller="MarcasMotos" method="POST" class="mt-4">
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombreC" name="nombre" class="form-control" required maxlength="100"/>
+                </div>
+            <button type="submit" class="btn btn-success">Crear Marca</button>
+                <a onclick="cancelarAccion('Crear')" class="btn btn-danger">Cancelar</a>
+            </form>
+        </div>
+
+        <div class="container" id="tablaMarcas">
+
+            <div style="display:flex; flex-direction: row; justify-content: space-between; margin-top: 50px">
+    <div style="align-self: center;">
+            <h1 >Lista de Marcas</h1>
+        
+    </div>
+    <div style="align-self: center;">
+            <a onclick="verDivCreacion()" class="btn btn-primary">+ Crear Nuevo</a>
+       
+    </div>
+</div>
+
+            <table class="table mt-4">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var marca in ViewBag.Marcas)
+                    {
+                        <tr>
+                            <td>@marca.Nombre</td>
+                            <td>
+                                <a class="btn btn-danger btn-sm" onclick="borrarRegistro(this)">Eliminar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    <script>
+        function verDivCreacion() {
+            document.getElementById("divCreacionMarca").style.display = "inline";
+            document.getElementById("nombreC").value = "";
+        }
+
+        function cancelarAccion(accion) {
+            if (accion == "Crear") {
+                document.getElementById("divCreacionMarca").style.display = "none";
+                document.getElementById("nombreC").value = "";
+            }
+        }
+
+        function borrarRegistro(e) {
+            const mensaje = "¿Estás seguro de que deseas eliminar el registro?";
+            const confirmacion = confirm(mensaje);
+
+            if (confirmacion) {
+                var nombreMarca = e.parentElement.parentElement.children[0].textContent;
+
+                var url = '@Url.Action("eliminar", "MarcasMotos", new { nombre = 1 })'
+                    .replace('1', nombreMarca);
+                window.location.href = url;
+            }
+        }
+    </script>
+    </body>
+
+</html>
+

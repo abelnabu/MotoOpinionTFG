@@ -1,0 +1,196 @@
+﻿@model List<UsuariosModel>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Usuarios</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MotoOpinion.styles.css" asp-append-version="true" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+        @{
+        if (ViewData["Error"] != null && ViewData["Error"].ToString() != "")
+        {
+            <h4 class="alert-danger">@ViewData["Error"]</h4>
+        }
+        if (ViewData["ProcesoRealizado"] != null && ViewData["ProcesoRealizado"].ToString() != "")
+        {
+            <h4 class="alert-info">@ViewData["ProcesoRealizado"]</h4>
+        }
+        }
+       
+        <div class="container" id="divCreacionUsu" style="display: none">
+            <h1 class="mt-5">Crear Nuevo Usuario</h1>
+            <form asp-action="crear" asp-controller="usuarios" method="POST" class="mt-4">
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombreC" name="nombre" class="form-control" required maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="emailC" name="email" class="form-control" required maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="clave">Clave:</label>
+                    <input type="password" id="claveC" name="clave" class="form-control" required maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="rol">Rol:</label>
+                    <select id="rolC" name="rol" class="form-control" required>
+                        <option value="Lector">Lector</option>
+                    <option value="Reseñador">Reseñador</option>
+                    <option value="Admin">Admin</option>
+                    </select>
+                </div>
+            <button type="submit" class="btn btn-success">Crear Usuario</button>
+                <a onclick="cancelarAccion('Crear')" class="btn btn-danger">Cancelar</a>
+            </form>
+        </div>
+        <div class="container" id="divEdicionUsu" style="display: none">
+            <h1 class="mt-5">Editar Usuario</h1>
+            <form asp-action="editar" asp-controller="usuarios" method="POST" class="mt-4">
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombreE" name="nombre" readonly class="form-control" required maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="emailE" name="email" class="form-control" required maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="clave">Clave:</label>
+                    <input type="password" id="claveE" name="clave" class="form-control" required maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="rol">Rol:</label>
+                    <select id="rolE" name="rol" class="form-control" required>
+                    <option value="Lector">Lector</option>
+                    <option value="Reseñador">Reseñador</option>
+                    <option value="Admin">Admin</option>
+                    </select>
+                </div>
+            <button type="submit" class="btn btn-success">Guardar Usuario</button>
+                <a onclick="cancelarAccion('Editar')" class="btn btn-danger">Cancelar</a>
+            </form>
+        </div>
+
+        <div class="container" id="tablaUsuarios">
+
+            <div style="display:flex; flex-direction: row; justify-content: space-between; margin-top: 50px">
+    <div style="align-self: center;">
+            <h1 >Lista de Usuarios</h1>
+        
+    </div>
+    <div style="align-self: center;">
+            <a onclick="verDivCreacion()" class="btn btn-primary">+ Crear Nuevo</a>
+       
+    </div>
+</div>
+
+            <table class="table mt-4">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var usuario in ViewBag.Usuarios)
+                    {
+                        <tr>
+                            <td>@usuario.Nombre</td>
+                            <td>@usuario.Email</td>
+                            <td>@usuario.Rol</td>
+                            <td>
+                                <a class="btn btn-primary btn-sm mr-2" onclick="editarRegistro(this)">Editar</a>
+                                <a class="btn btn-danger btn-sm" onclick="borrarRegistro(this)">Eliminar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+    </body>
+
+</html>
+
+<script>
+    function verDivCreacion() {
+        document.getElementById("divEdicionUsu").style.display = "none";
+        document.getElementById("divCreacionUsu").style.display = "inline";
+        document.getElementById("nombreC").value = "";
+        document.getElementById("emailC").value = "";
+        document.getElementById("claveC").value = "";
+    }
+
+    function cancelarAccion(accion) { 
+        if (accion == "Crear") {
+            document.getElementById("divCreacionUsu").style.display = "none";
+            document.getElementById("nombreC").value = "";
+            document.getElementById("emailC").value = "";
+            document.getElementById("claveC").value = "";
+            document.getElementById('rolC').selectedIndex = 0;
+        } else if (accion == "Editar") {
+            document.getElementById("divEdicionUsu").style.display = "none";
+            document.getElementById("nombreE").value = "";
+            document.getElementById("emailE").value = "";
+            document.getElementById("claveE").value = "";
+            document.getElementById('rolC').selectedIndex = 0;
+        }
+
+    }
+
+    function editarRegistro(e) {
+        var nombreUsuario = e.parentElement.parentElement.children[0].textContent;
+        var data = { nombre:nombreUsuario}
+
+        $.ajax({
+            url: '@Url.Action("leerUsuario", "Usuarios")',
+            type: 'POST',
+            data: data,
+            success: function (data) {
+                document.getElementById("divCreacionUsu").style.display = "none";
+                var objUsu = JSON.parse(data);
+                document.getElementById("divEdicionUsu").style.display = "inline";
+                document.getElementById("nombreE").value = objUsu.Nombre;
+                document.getElementById("emailE").value = objUsu.Email;
+                document.getElementById("claveE").value = objUsu.Clave;
+
+                const selectElement = document.getElementById('rolE');
+
+                for (let i = 0; i < selectElement.options.length; i++) {
+                    if (selectElement.options[i].text === objUsu.Rol) {
+                        selectElement.selectedIndex = i;
+                        break;
+                    }
+                }
+            },
+            error: function () {
+
+            }
+        });
+    }
+
+    function borrarRegistro(e) {
+        const mensaje = "¿Estás seguro de que deseas eliminar el registro?";
+        const confirmacion = confirm(mensaje);
+
+        if (confirmacion) {
+            var nombreUsuario = e.parentElement.parentElement.children[0].textContent;
+            
+            var data = { nombre: nombreUsuario }
+
+            var url = '@Url.Action("eliminar", "Usuarios", new { nombre = 1 })'
+                .replace('1', nombreUsuario);
+            window.location.href = url;
+        }
+    }
+</script>

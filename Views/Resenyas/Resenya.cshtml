@@ -1,0 +1,163 @@
+﻿@model MotoOpinion.Models.ResenyasModel;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resenyas Motos</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MotoOpinion.styles.css" asp-append-version="true" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    @{
+        if (ViewData["Error"] != null && ViewData["Error"].ToString() != "")
+        {
+            <h4 class="alert-danger">@ViewData["Error"]</h4>
+        }
+        if (ViewData["ProcesoRealizado"] != null && ViewData["ProcesoRealizado"].ToString() != "")
+        {
+            <h4 class="alert-info">@ViewData["ProcesoRealizado"]</h4>
+        }
+    }
+    <input hidden id="usuNom" value="@ViewData["UsuarioNombre"]"/>
+        <div style="display: flex; flex-direction:column">
+            <div style="align-self: center;">
+            <br /> <h1>@Model.Titulo</h1><br />
+            </div>
+            <div style="align-self: center; border:2px solid grey; border-radius:5px; border: 2px solid grey;">
+            <img src="@Model.ImagenBase64 " />
+            </div>
+            <div style="border:2px solid grey; border-radius:5px; border: 2px solid grey; padding: 20px;border-radius: 5px;margin-top: 50px;background-color: #cbcbcbad;" id="Texto">
+                
+             <p hidden id="textoHidden">@Model.Texto</p>
+                
+            </div>
+
+        <div style="border:2px solid grey; border-radius:5px; border: 2px solid grey; padding: 20px;border-radius: 5px;margin-top: 50px;background-color: #cbcbcbad; display:flex; flex-direction: row;justify-content: space-between ">
+                   <p>Reseña realizada por: <strong>@ViewData["UsuarioNombre"]</strong> </p>
+
+            @{
+                if (ViewData["estaSuscrito"].ToString() == "true")
+                {
+                    <button onclick="desSuscribirse()" class="btn btn-danger">X Cancelar suscripción</button>
+                }
+                else
+                {
+                    <button onclick="suscribirse()" class="btn btn-primary">✉️ Suscribirme a este usuario</button>
+                }
+
+                   }
+                   
+            </div>
+        </div>
+
+        <hr />
+
+        <h6>Comentarios:</h6>
+        @{
+            foreach (var comentario in ViewBag.Comentarios)
+        {
+            <div style="display: flex; flex-direction:column; border:2px solid grey; padding: 20px;border-radius: 5px; background-color: #cbcbcbad; margin-bottom:20px ">
+                <div style="display: flex; flex-direction:row;justify-content: space-between; border-bottom: 2px solid grey">
+                <div>
+                    @for (int i = 0; i < @comentario.Puntuacion; i++)
+                    {
+                        <label style=" color: #f5b301; font-size:larger">★</label>
+                    }
+                    </div>
+                    <p>@comentario.NombreUsuario</p>
+                   <p>@comentario.Fecha.ToString("dd/MM/yyyy")</p>
+                </div>
+                <div style="margin-top: 5px">
+                    <p>@comentario.Texto</p>
+                </div>
+            </div>
+        }
+
+        }
+        
+        <hr />
+
+        <form asp-action="crearComentario" asp-controller="Resenyas" method="post" style="margin-top:50px" >
+            <h6>Dejar un comentario:</h6>
+            <input hidden value="@Model.Id" name="IdResenya"/>
+            <div style="display: flex; flex-direction:column; ">
+                <div style="display: flex; flex-direction:row;">
+                    <div style="width: 20%;">
+                        <div class="rating">
+                            <input type="radio" id="star5" name="Rating" value="5" />
+                            <label for="star5" title="5 estrellas">★</label>
+                            <input type="radio" id="star4" name="Rating" value="4" />
+                            <label for="star4" title="4 estrellas">★</label>
+                            <input type="radio" id="star3" name="Rating" value="3" />
+                            <label for="star3" title="3 estrellas">★</label>
+                            <input type="radio" id="star2" name="Rating" value="2" />
+                            <label for="star2" title="2 estrellas">★</label>
+                            <input type="radio" id="star1" name="Rating" value="1" />
+                            <label for="star1" title="1 estrella">★</label>
+                        </div>
+                    </div>
+            
+                    <textarea name="Texto" style="width: 80%; border:2px solid grey; border-radius:5px;" placeholder="Escribe un comentario..."></textarea>
+           
+                </div>
+                <div style="text-align: right;padding-top: 10px;">
+                     <button type="submit" class="btn btn-primary">Publicar</button>
+                </div>
+            </div>
+       </form>
+    </body>
+
+</html>
+<script>
+    
+    document.getElementById("Texto").innerHTML = document.getElementById("textoHidden").textContent;
+
+    function suscribirse(){
+        var nombre = document.getElementById("usuNom").value;
+        var data = { nombre: nombre }
+
+     $.ajax({
+            url: '@Url.Action("suscribirse", "Resenyas")',
+            type: 'POST',
+            data: data,
+            success: function (data) {
+                if(data == "true"){
+                    alert("Te has suscrito correctante al usuario: " + nombre);
+                    window.location.reload();
+                }else{
+                    alert("Error al suscribirte al usuario: " + nombre);
+                }  
+            },
+            error: function () {
+                alert("Error al suscribirte al usuario: " + nombre);
+            }
+        });
+    }
+
+    function desSuscribirse(){
+        var nombre = document.getElementById("usuNom").value;
+        var data = { nombre: nombre }
+
+     $.ajax({
+            url: '@Url.Action("desSuscribirse", "Resenyas")',
+            type: 'POST',
+            data: data,
+            success: function (data) {
+                if(data == "true"){
+                    alert("Has cancelado tu suscrición al usuario: " + nombre);
+                    window.location.reload();
+                }else{
+                    alert("Error al cancelar tu suscrición al usuario: " + nombre);
+                }  
+            },
+            error: function () {
+                alert("Error al cancelar tu suscrición al usuario: " + nombre);
+            }
+        });
+    }
+</script>

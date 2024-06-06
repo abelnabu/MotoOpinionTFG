@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MotoOpinion</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MotoOpinion.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <div style="border-bottom: 8px solid;" id="div1">
+            <div style="border-bottom: 3px dashed;" id="div2-">
+                <div style="border-bottom: 8px solid;" id="div3">
+                    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                        <div class="container-fluid">
+
+                            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                                <ul class="navbar-nav flex-grow-1">
+                                    <a class="navbar-brand" asp-controller="Resenyas" asp-action="Index"><img style="height: 7vh" src="/LOGO.jpg" /></a>
+                                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                            aria-expanded="false" aria-label="Toggle navigation">
+                                        <span class="navbar-toggler-icon"></span>
+                                    </button>
+                                    <li class="nav-item" id="opcResenyas" style="display: none">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Resenyas" asp-action="Index">Reseñas</a>
+                                    </li>
+                                    <li class="nav-item" id="opcUsuarios" style="display: none">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Index">Usuarios</a>
+                                    </li>
+                                    <li class="nav-item" id="opcMarcasMotos" style="display: none">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="MarcasMotos" asp-action="Index">Marcas motos</a>
+                                    </li>
+                                    <li class="nav-item" id="opcModelosMotos" style="display: none">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="ModelosMotos" asp-action="Index">Modelos motos</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+       
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted" style="text-align: center; position: relative !important;">
+        <div class="container">
+            &copy; 2024 - MotoOpinion - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function () {
+           
+            $.ajax({
+                url: '@Url.Action("ObtenerPermisos", "Login")',
+                type: 'POST',
+                success: function (data) {
+                    if (data == "") {
+
+                    } else if (data == "Admin") 
+                    {
+                        document.getElementById("opcUsuarios").style.display = "inline";
+                        document.getElementById("opcMarcasMotos").style.display = "inline";
+                        document.getElementById("opcResenyas").style.display = "inline";
+                        document.getElementById("opcModelosMotos").style.display = "inline";
+                    } else if (data == "Reseñador") 
+                    {
+                        document.getElementById("opcResenyas").style.display = "inline";
+
+                    }
+                    else if (data == "Lector") {
+                        document.getElementById("opcResenyas").style.display = "inline";
+
+                    }
+                },
+                error: function () {
+                        
+                }
+            });
+            
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
